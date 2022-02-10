@@ -27,7 +27,7 @@ Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos)
 Eigen::Matrix4f get_model_matrix(float rotation_angle)
 {
     Eigen::Matrix4f model = Eigen::Matrix4f::Identity();
-    float alpha = degree_to_arc(rotation_angle);
+    double alpha = degree_to_arc(rotation_angle);
 
     model(0, 0) = std::cos(alpha);
     model(0, 1) = -std::sin(alpha);
@@ -51,8 +51,8 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
                     0, 0, zNear + zFar, -zNear * zFar,
                     0, 0, 1, 0;
 
-    float top = -std::abs(zNear) * std::tan(degree_to_arc(eye_fov)/ 2.0f);
-    float right = top * aspect_ratio;
+    double top = -std::abs(zNear) * std::tan(degree_to_arc(eye_fov)/ 2.0f);
+    double right = top * aspect_ratio;
     ortho <<    1.0f / top, 0, 0, 0,
                 0, 1.0f / right, 0, 0,
                 0, 0, 2.0f / (zFar - zNear), (zFar + zNear) / (zNear - zFar),
@@ -61,6 +61,23 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
     projection = ortho * persp2ortho;
 
     return projection;
+}
+
+Eigen::Matrix4f get_rotation(Vector3f axis, float angle)
+{
+    Eigen::Matrix4f rotation = Eigen::Matrix4f::Identity();
+
+    double alpha = degree_to_arc(angle);
+    axis.normalize();
+    Eigen::Matrix4f n = Eigen::Matrix4f::Identity();
+    n <<    0, -axis.z(), axis.y(), 0,
+            axis.z(), 0, -axis.x(), 0,
+            -axis.y(), axis.x(), 0, 0,
+            0, 0, 0, 0;
+
+    rotation = rotation + std::sin(alpha) * n + (1 - std::cos(alpha)) * n * n;
+
+    return rotation;
 }
 
 int main(int argc, const char** argv)
