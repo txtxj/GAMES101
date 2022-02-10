@@ -1,3 +1,0 @@
-/home/txtxj/Code/GitProject/GAMES101/pa0/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/txtxj/Code/GitProject/GAMES101/pa0/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/txtxj/Code/GitProject/GAMES101/pa0/cmake-build-debug/CMakeFiles/pa0.dir
