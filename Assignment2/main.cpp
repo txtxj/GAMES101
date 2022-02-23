@@ -7,6 +7,11 @@
 
 constexpr double MY_PI = 3.1415926;
 
+double degree_to_arc(double angle)
+{
+    return angle * MY_PI / 180.f;
+}
+
 Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos)
 {
     Eigen::Matrix4f view = Eigen::Matrix4f::Identity();
@@ -30,8 +35,24 @@ Eigen::Matrix4f get_model_matrix(float rotation_angle)
 
 Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float zNear, float zFar)
 {
-    // TODO: Copy-paste your implementation from the previous assignment.
-    Eigen::Matrix4f projection;
+    Eigen::Matrix4f projection = Eigen::Matrix4f::Identity();
+
+    Eigen::Matrix4f persp2ortho;
+    Eigen::Matrix4f ortho;
+
+    persp2ortho <<  zNear, 0, 0, 0,
+                    0, zNear, 0, 0,
+                    0, 0, zNear + zFar, -zNear * zFar,
+                    0, 0, 1.0f, 0;
+
+    double top = -std::abs(zNear) * std::tan(degree_to_arc(eye_fov)/ 2.0f);
+    double right = top * aspect_ratio;
+    ortho <<    1.0f / top, 0, 0, 0,
+                0, 1.0f / right, 0, 0,
+                0, 0, 2.0f / (zFar - zNear), (zFar + zNear) / (zNear - zFar),
+                0, 0, 0, 1.0f;
+
+    projection = ortho * persp2ortho;
 
     return projection;
 }
