@@ -65,7 +65,7 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
     float right = top * aspect_ratio;
     ortho <<    1.0f / top, 0, 0, 0,
                 0, 1.0f / right, 0, 0,
-                0, 0, 2.0f / (zFar - zNear), (zFar + zNear) / (zNear - zFar),
+                0, 0, 2.0f / (zNear - zFar), (zFar + zNear) / (zFar - zNear),
                 0, 0, 0, 1.0f;
 
     projection = ortho * persp2ortho;
