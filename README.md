@@ -2,12 +2,12 @@
 
 ### HW1
 
-![](/home/txtxj/Code/GitProject/GAMES101/Picture/hw1_0.png)
+![](/Picture/hw1_0.png)
 
 ### HW2
 
-![hw2_0](/home/txtxj/Code/GitProject/GAMES101/Picture/hw2_0.png)
+![hw2_0](/Picture/hw2_0.png)
 
 super-sampling:
 
-![hw2_1](/home/txtxj/Code/GitProject/GAMES101/Picture/hw2_1.png)
+![hw2_1](/Picture/hw2_1.png)
