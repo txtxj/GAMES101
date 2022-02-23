@@ -66,7 +66,7 @@ namespace rst
         void set_view(const Eigen::Matrix4f& v);
         void set_projection(const Eigen::Matrix4f& p);
 
-        void set_pixel(const Eigen::Vector4f& point, const Eigen::Vector3f& color);
+        void set_pixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color);
 
         void clear(Buffers buff);
 
@@ -91,12 +91,11 @@ namespace rst
         std::map<int, std::vector<Eigen::Vector3f>> col_buf;
 
         std::vector<Eigen::Vector3f> frame_buf;
-        std::vector<Eigen::Vector3f> frame_buf_ss;
 
         std::vector<float> depth_buf;
-        int get_index(int x, int y, int w);
+        int get_index(int x, int y);
 
-        int width, height, pixel_cnt;
+        int width, height;
 
         int next_id = 0;
         int get_next_id() { return next_id++; }

@@ -5,7 +5,7 @@
 
 #include <algorithm>
 #include <vector>
-#include "rasterizer.hpp"
+#include "rasterizer_o.hpp"
 #include <opencv2/opencv.hpp>
 #include <math.h>
 
@@ -40,11 +40,11 @@ auto to_vec4(const Eigen::Vector3f& v3, float w = 1.0f)
 }
 
 
-static bool insideTriangle(float x, float y, const Vector3f* _v)
+static bool insideTriangle(int x, int y, const Vector3f* _v)
 {   
     // TODO : Implement this function to check if the point (x, y) is inside the triangle represented by _v[0], _v[1], _v[2]
 
-    Vector3f _p = Vector3f(x, y, 1.0f);
+    Vector3f _p = Vector3f((float)x + 0.5f, (float)y + 0.5f, 1.0f);
     Vector3f a = _v[0];
     Vector3f b = _v[1];
     Vector3f c = _v[2];
@@ -130,10 +130,6 @@ void rst::rasterizer::draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf
 
         rasterize_triangle(t);
     }
-    for (int i = 0; i < pixel_cnt; i++)
-    {
-        frame_buf[i] = 0.25f * (frame_buf_ss[i] + frame_buf_ss[i + pixel_cnt] + frame_buf_ss[i + pixel_cnt * 2] + frame_buf_ss[i + pixel_cnt * 3]);
-    }
 }
 
 //Screen space rasterization
@@ -173,26 +169,18 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
     {
         for (int y = aabb_y_min; y <= aabb_y_max; y++)
         {
-            int cnt = 0;
-            for (auto xx : {0.25f, 0.75f})
+            if (insideTriangle(x, y, t.v))
             {
-                for (auto yy : {0.25f, 0.75f})
-                {
-                    if (insideTriangle(x + xx, y + yy, t.v))
-                    {
-                        auto[alpha, beta, gamma] = computeBarycentric2D(x + xx, y + yy, t.v);
-                        float w_reciprocal = 1.0/(alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
-                        float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
-                        z_interpolated *= w_reciprocal;
+                auto[alpha, beta, gamma] = computeBarycentric2D(x, y, t.v);
+                float w_reciprocal = 1.0/(alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
+                float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
+                z_interpolated *= w_reciprocal;
 
-                        int ind = get_index(x, y, cnt);
-                        if (z_interpolated < depth_buf[ind])
-                        {
-                            depth_buf[ind] = z_interpolated;
-                            set_pixel(Vector4f(x, y, 1, cnt), t.getColor());
-                        }
-                        cnt++;
-                    }
+                int ind = get_index(x, y);
+                if (z_interpolated < depth_buf[ind])
+                {
+                    depth_buf[ind] = z_interpolated;
+                    set_pixel(Vector3f(x, y, 1), t.getColor());
                 }
             }
         }
@@ -220,7 +208,6 @@ void rst::rasterizer::clear(rst::Buffers buff)
     if ((buff & rst::Buffers::Color) == rst::Buffers::Color)
     {
         std::fill(frame_buf.begin(), frame_buf.end(), Eigen::Vector3f{0, 0, 0});
-        std::fill(frame_buf_ss.begin(), frame_buf_ss.end(), Eigen::Vector3f{0, 0, 0});
     }
     if ((buff & rst::Buffers::Depth) == rst::Buffers::Depth)
     {
@@ -228,23 +215,22 @@ void rst::rasterizer::clear(rst::Buffers buff)
     }
 }
 
-rst::rasterizer::rasterizer(int w, int h) : width(w), height(h), pixel_cnt(w * h)
+rst::rasterizer::rasterizer(int w, int h) : width(w), height(h)
 {
     frame_buf.resize(w * h);
-    frame_buf_ss.resize(w * h * 4);
-    depth_buf.resize(w * h * 4);
+    depth_buf.resize(w * h);
 }
 
-int rst::rasterizer::get_index(int x, int y, int w)
+int rst::rasterizer::get_index(int x, int y)
 {
-    return ((height-1-y)*width + x) + pixel_cnt * w;
+    return (height-1-y)*width + x;
 }
 
-void rst::rasterizer::set_pixel(const Eigen::Vector4f& point, const Eigen::Vector3f& color)
+void rst::rasterizer::set_pixel(const Eigen::Vector3f& point, const Eigen::Vector3f& color)
 {
     //old index: auto ind = point.y() + point.x() * width;
-    auto ind = ((height-1-point.y())*width + point.x()) + pixel_cnt * point.w();
-    frame_buf_ss[ind] = color;
+    auto ind = (height-1-point.y())*width + point.x();
+    frame_buf[ind] = color;
 
 }
 
