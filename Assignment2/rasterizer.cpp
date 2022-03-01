@@ -132,7 +132,12 @@ void rst::rasterizer::draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf
     }
     for (int i = 0; i < pixel_cnt; i++)
     {
-        frame_buf[i] = 0.25f * (frame_buf_ss[i] + frame_buf_ss[i + pixel_cnt] + frame_buf_ss[i + pixel_cnt * 2] + frame_buf_ss[i + pixel_cnt * 3]);
+        frame_buf[i] = Eigen::Vector3f(0, 0, 0);
+        for (int j = 0; j < ssaa_cnt; j++)
+        {
+            frame_buf[i] += frame_buf_ss[i + j * pixel_cnt];
+        }
+        frame_buf[i] /= float(ssaa_cnt);
     }
 }
 
@@ -174,9 +179,9 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
         for (int y = aabb_y_min; y <= aabb_y_max; y++)
         {
             int cnt = 0;
-            for (auto xx : {0.25f, 0.75f})
+            for (auto xx : gaps)
             {
-                for (auto yy : {0.25f, 0.75f})
+                for (auto yy : gaps)
                 {
                     if (insideTriangle(x + xx, y + yy, t.v))
                     {
@@ -228,11 +233,18 @@ void rst::rasterizer::clear(rst::Buffers buff)
     }
 }
 
-rst::rasterizer::rasterizer(int w, int h) : width(w), height(h), pixel_cnt(w * h)
+rst::rasterizer::rasterizer(int w, int h, int s = 1) : width(w), height(h), pixel_cnt(w * h), ssaa(s), ssaa_cnt(s * s)
 {
     frame_buf.resize(w * h);
-    frame_buf_ss.resize(w * h * 4);
-    depth_buf.resize(w * h * 4);
+    frame_buf_ss.resize(w * h * s * s);
+    depth_buf.resize(w * h * s * s);
+    gaps.resize(s);
+
+    double gap = 1.0 / double(ssaa);
+    for (int i = 0; i < ssaa; i++)
+    {
+        gaps[i] = gap * i + gap / 2.0;
+    }
 }
 
 int rst::rasterizer::get_index(int x, int y, int w)
@@ -245,7 +257,6 @@ void rst::rasterizer::set_pixel(const Eigen::Vector4f& point, const Eigen::Vecto
     //old index: auto ind = point.y() + point.x() * width;
     auto ind = ((height-1-point.y())*width + point.x()) + pixel_cnt * point.w();
     frame_buf_ss[ind] = color;
-
 }
 
 // clang-format on
