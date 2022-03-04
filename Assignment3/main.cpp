@@ -255,7 +255,7 @@ Eigen::Vector3f displacement_fragment_shader(const fragment_shader_payload& payl
 
 Eigen::Vector3f bump_fragment_shader(const fragment_shader_payload& payload)
 {
-    
+
     Eigen::Vector3f ka = Eigen::Vector3f(0.005, 0.005, 0.005);
     Eigen::Vector3f kd = payload.color;
     Eigen::Vector3f ks = Eigen::Vector3f(0.7937, 0.7937, 0.7937);
@@ -273,8 +273,17 @@ Eigen::Vector3f bump_fragment_shader(const fragment_shader_payload& payload)
     Eigen::Vector3f point = payload.view_pos;
     Eigen::Vector3f normal = payload.normal;
 
-
     float kh = 0.2, kn = 0.1;
+
+    auto u = payload.tex_coords.x();
+    auto v = payload.tex_coords.y();
+    auto w = payload.texture->width;
+    auto h = payload.texture->height;
+
+    float dU = kh * kn * (payload.texture->getColor(u+1.0f/w,v).norm()-payload.texture->getColor(u,v).norm());
+    float dV = kh * kn * (payload.texture->getColor(u,v+1.0f/h).norm()-payload.texture->getColor(u,v).norm());
+
+    auto ln = Eigen::Vector3f(-dU, -dV, 1);
 
     // TODO: Implement bump mapping here
     // Let n = normal = (x, y, z)
@@ -286,6 +295,18 @@ Eigen::Vector3f bump_fragment_shader(const fragment_shader_payload& payload)
     // Vector ln = (-dU, -dV, 1)
     // Normal n = normalize(TBN * ln)
 
+    float x = normal.x();
+    float y = normal.y();
+    float z = normal.z();
+
+    auto t = Eigen::Vector3f(x*y/std::sqrt(x*x+z*z),std::sqrt(x*x+z*z),z*y/std::sqrt(x*x+z*z));
+    auto b = normal.cross(t);
+    Eigen::Matrix3f TBN;
+    TBN.col(0) = t;
+    TBN.col(1) = b;
+    TBN.col(2) = normal;
+
+    normal = (TBN * ln).normalized();
 
     Eigen::Vector3f result_color = {0, 0, 0};
     result_color = normal;
