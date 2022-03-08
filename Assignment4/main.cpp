@@ -4,6 +4,14 @@
 
 std::vector<cv::Point2f> control_points;
 
+constexpr int cols = 700;
+constexpr int rows = 700;
+
+bool check_in_screen(int x, int y)
+{
+    return (0 <= x && x < rows && 0 <= y && y < cols);
+}
+
 void mouse_handler(int event, int x, int y, int flags, void *userdata) 
 {
     if (event == cv::EVENT_LBUTTONDOWN && control_points.size() < 4) 
@@ -58,13 +66,25 @@ void bezier(const std::vector<cv::Point2f> &control_points, cv::Mat &window)
     {
         t += step;
         cv::Point2f p = recursive_bezier(control_points, t);
-        window.at<cv::Vec3b>(p.y, p.x)[1] = 255;
+        for (int i = -10; i <= 10; i++)
+        {
+            for (int j = -10; j <= 10; j++)
+            {
+                int xx = p.x + i;
+                int yy = p.y + j;
+                if (check_in_screen(xx, yy))
+                {
+                    auto dist = std::sqrt(std::pow(xx - p.x, 2) + std::pow(yy - p.y, 2));
+                    window.at<cv::Vec3b>(p.y, p.x)[1] = std::min(255, window.at<cv::Vec3b>(p.y, p.x)[1] + std::max(int(50 - exp(dist)), 0));
+                }
+            }
+        }
     }
 }
 
 int main() 
 {
-    cv::Mat window = cv::Mat(700, 700, CV_8UC3, cv::Scalar(0));
+    cv::Mat window = cv::Mat(rows, cols, CV_8UC3, cv::Scalar(0));
     cv::cvtColor(window, window, cv::COLOR_BGR2RGB);
     cv::namedWindow("Bezier Curve", cv::WINDOW_AUTOSIZE);
 
@@ -80,7 +100,7 @@ int main()
 
         if (control_points.size() == 4) 
         {
-            naive_bezier(control_points, window);
+//            naive_bezier(control_points, window);
             bezier(control_points, window);
 
             cv::imshow("Bezier Curve", window);
