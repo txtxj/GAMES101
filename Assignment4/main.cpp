@@ -6,6 +6,7 @@ std::vector<cv::Point2f> control_points;
 
 constexpr int cols = 700;
 constexpr int rows = 700;
+constexpr int p_count = 8;
 
 bool check_in_screen(int x, int y)
 {
@@ -14,7 +15,7 @@ bool check_in_screen(int x, int y)
 
 void mouse_handler(int event, int x, int y, int flags, void *userdata) 
 {
-    if (event == cv::EVENT_LBUTTONDOWN && control_points.size() < 4) 
+    if (event == cv::EVENT_LBUTTONDOWN && control_points.size() < p_count)
     {
         std::cout << "Left button of the mouse is clicked - position (" << x << ", "
         << y << ")" << '\n';
@@ -98,7 +99,7 @@ int main()
             cv::circle(window, point, 3, {255, 255, 255}, 3);
         }
 
-        if (control_points.size() == 4) 
+        if (control_points.size() == p_count)
         {
 //            naive_bezier(control_points, window);
             bezier(control_points, window);
