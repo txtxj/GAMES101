@@ -64,3 +64,11 @@
         </td>
     </tr></table>
 </details>
+<details>
+    <summary><strong>作业 5</strong></summary>
+    <table><tr>
+        <td>
+    		<img src="Image/hw5/binary.png" border=0>
+        </td>
+    </tr></table>
+</details>
