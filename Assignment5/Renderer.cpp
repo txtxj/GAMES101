@@ -223,8 +223,8 @@ void Renderer::Render(const Scene& scene)
         for (int i = 0; i < scene.width; ++i)
         {
             // generate primary ray direction
-            float x = (((float)i + 0.5f) / (float)scene.width * 2.0f - 1.0f) * imageAspectRatio;
-            float y = 1.0f - ((float)j + 0.5f) / (float)scene.width * 2.0f;
+            float x = (((float)i + 0.5f) / (float)scene.width * 2.0f - 1.0f) * imageAspectRatio * scale;
+            float y = (1.0f - ((float)j + 0.5f) / (float)scene.height * 2.0f) * scale;
             // TODO: Find the x and y positions of the current pixel to get the direction
             // vector that passes through it.
             // Also, don't forget to multiply both of them with the variable *scale*, and
