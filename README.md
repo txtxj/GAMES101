@@ -73,3 +73,12 @@
         </td>
     </tr></table>
 </details>
+<details>
+    <summary><strong>作业 6</strong></summary>
+    <table><tr>
+        <td>
+    		<img src="Image/hw6/binary.png" border=0>
+        </td>
+    </tr></table>
+</details>
+
