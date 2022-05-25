@@ -210,28 +210,37 @@ inline Bounds3 Triangle::getBounds() { return Union(Bounds3(v0, v1), v2); }
 
 inline Intersection Triangle::getIntersection(Ray ray)
 {
-	// TODO find ray triangle intersection
-    Intersection inter;
+	Intersection inter;
 
-	Vector3f e1 = v1 - v0;
-	Vector3f e2 = v2 - v0;
-	Vector3f s = ray.origin - v0;
-	Vector3f s1 = crossProduct(ray.direction, e2);
-	Vector3f s2 = crossProduct(s, e1);
-	float coeff = 1.0f / dotProduct(s1, e1);
-	float tnear = coeff * dotProduct(s2, e2);
-	float u = coeff * dotProduct(s1, s);
-	float v = coeff * dotProduct(s2, ray.direction);
-	if (tnear >= 0 && u >= 0 && v >= 0 && (1 - u - v) >= 0)
-	{
-		inter.happened = true;
-		inter.coords = Vector3f(tnear, u, v);
-		inter.normal = normal;
-		inter.distance = tnear;
-		inter.obj = this;
-		inter.m = m;
-	}
-    return inter;
+	if (dotProduct(ray.direction, normal) > 0)
+		return inter;
+	double u, v, t_tmp = 0;
+	Vector3f pvec = crossProduct(ray.direction, e2);
+	double det = dotProduct(e1, pvec);
+	if (fabs(det) < EPSILON)
+		return inter;
+
+	double det_inv = 1. / det;
+	Vector3f tvec = ray.origin - v0;
+	u = dotProduct(tvec, pvec) * det_inv;
+	if (u < 0 || u > 1)
+		return inter;
+	Vector3f qvec = crossProduct(tvec, e1);
+	v = dotProduct(ray.direction, qvec) * det_inv;
+	if (v < 0 || u + v > 1)
+		return inter;
+	t_tmp = dotProduct(e2, qvec) * det_inv;
+
+	// TODO find ray triangle intersection
+
+	inter.happened = t_tmp >= 0 && u >= 0 && v >= 0 && (1 - u - v) >= 0;
+	inter.coords = ray(t_tmp);
+	inter.normal = normal;
+	inter.distance = t_tmp;
+	inter.obj = this;
+	inter.m = m;
+
+	return inter;
 }
 
 inline Vector3f Triangle::evalDiffuseColor(const Vector2f&) const
