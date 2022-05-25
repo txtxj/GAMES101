@@ -194,7 +194,7 @@ public:
 
         return intersec;
     }
-    
+
     void Sample(Intersection &pos, float &pdf){
         bvh->Sample(pos, pdf);
         pos.emit = m->getEmission();
@@ -254,7 +254,15 @@ inline Intersection Triangle::getIntersection(Ray ray)
 
     // TODO find ray triangle intersection
 
-    return inter;
+	inter.happened = t_tmp >= 0 && u >= 0 && v >= 0 && (1 - u - v) >= 0;
+	inter.coords = ray(t_tmp);
+	inter.normal = normal;
+	inter.distance = t_tmp;
+	inter.obj = this;
+	inter.m = m;
+	inter.emit = m->getEmission();
+
+	return inter;
 }
 
 inline Vector3f Triangle::evalDiffuseColor(const Vector2f&) const
