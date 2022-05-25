@@ -6,14 +6,17 @@
 #include "global.hpp"
 #include <chrono>
 
+std::random_device rd;
+std::mt19937 rng(rd());
+std::uniform_real_distribution<float> dist(0.f, 1.f);
+
+
 // In the main function of the program, we create the scene (create objects and
 // lights) as well as set the options for the render (image width and height,
 // maximum recursion depth, field-of-view, etc.). We then call the render
 // function().
 int main(int argc, char** argv)
 {
-
-    // Change the definition here to change resolution
     Scene scene(784, 784);
 
     Material* red = new Material(DIFFUSE, Vector3f(0.0f));
