@@ -82,12 +82,13 @@
         </td>
     </tr></table>
 </details>
+
 <details>
     <summary><strong>作业 7</strong></summary>
     <table><tr>
         <td>
             <img src="Image/hw7/binary.png" border=0>
-            <p style="display: block; text-align: center; color: #969696;padding: 10px;">spp=48</p>
+            <p style="display: block; text-align: center; color: #969696;padding: 10px;">spp=1000</p>
         </td>
     </tr></table>
 </details>
