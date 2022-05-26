@@ -80,6 +80,9 @@ inline Vector3f normalize(const Vector3f &v)
 inline float dotProduct(const Vector3f &a, const Vector3f &b)
 { return a.x * b.x + a.y * b.y + a.z * b.z; }
 
+inline float dotProductPositive(const Vector3f &a, const Vector3f &b)
+{ return std::max(0.0f, dotProduct(a, b)); }
+
 inline Vector3f crossProduct(const Vector3f &a, const Vector3f &b)
 {
     return Vector3f(

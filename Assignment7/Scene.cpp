@@ -66,9 +66,9 @@ Vector3f Scene::castRay(const Ray &ray, int depth) const
 	{
 		return {0, 0, 0};
 	}
-	if (r.emit.norm() > 0)
+	if (r.obj->hasEmit())
 	{
-		return {1, 1, 1};
+		return r.m->getEmission();
 	}
 	Vector3f L_dir = 0, L_indir = 0;
 	Vector3f p = r.coords;
@@ -86,13 +86,13 @@ Vector3f Scene::castRay(const Ray &ray, int depth) const
 	Intersection i = intersect(Ray(p, ws));
 	if ((i.coords - x).norm() < EPSILON)
 	{
-		L_dir = emit * r.m->eval(wo, ws, N) * dotProduct(ws, N) * dotProduct(-ws, NN) / (dis * dis * pdf_light);
+		L_dir = emit * r.m->eval(wo, ws, N) * dotProductPositive(ws, N) * dotProductPositive(-ws, NN) / (dis * dis * pdf_light);
 	}
 
 	if (get_random_float() < RussianRoulette)
 	{
 		Vector3f wi = r.m->sample(wo, N);
-		L_indir = castRay(Ray(p, wi), depth) * r.m->eval(wi, wo, N) * dotProduct(wi, N) / (r.m->pdf(wo, wi, N) * RussianRoulette);
+		L_indir = castRay(Ray(p, wi), depth) * r.m->eval(wi, wo, N) * dotProductPositive(wi, N) / (r.m->pdf(wi, wo, N) * RussianRoulette);
 	}
 	return L_dir + L_indir;
 }
