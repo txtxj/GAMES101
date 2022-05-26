@@ -5,7 +5,7 @@
 ## 作业结果截图
 
 <details>
-    <summary><strong>作业 1</strong></summary>
+    <summary><strong>作业 1 Rotation and Projection</strong></summary>
     <table><tr>
         <td>
     		<img src="Image/hw1/hw1_0.png" border=0>
@@ -14,7 +14,7 @@
 </details>
 
 <details>
-    <summary><strong>作业 2</strong></summary>
+    <summary><strong>作业 2 Triangles and Z-buffering</strong></summary>
     <table><tr>
 		<td>
             <img src="Image/hw2/rasterizer.png" border=0>
@@ -28,7 +28,7 @@
 </details>
 
 <details>
-    <summary><strong>作业 3</strong></summary>
+    <summary><strong>作业 3 Pipeline and Shading</strong></summary>
     <table><tr>
         <td>
     		<img src="Image/hw3/normal.png" border=0>
@@ -54,7 +54,7 @@
 </details>
 
 <details>
-    <summary><strong>作业 4</strong></summary>
+    <summary><strong>作业 4 Bézier Curve</strong></summary>
     <table><tr>
         <td>
     		<img src="Image/hw4/bezier_green.png" border=0>
@@ -66,7 +66,7 @@
 </details>
 
 <details>
-    <summary><strong>作业 5</strong></summary>
+    <summary><strong>作业 5 Ray Triangle Intersection</strong></summary>
     <table><tr>
         <td>
     		<img src="Image/hw5/binary.png" border=0>
@@ -75,7 +75,7 @@
 </details>
 
 <details>
-    <summary><strong>作业 6</strong></summary>
+    <summary><strong>作业 6 Bounding Volume Hierarchy</strong></summary>
     <table><tr>
         <td>
     		<img src="Image/hw6/binary.png" border=0>
@@ -84,11 +84,11 @@
 </details>
 
 <details>
-    <summary><strong>作业 7</strong></summary>
+    <summary><strong>作业 7 Path Tracing</strong></summary>
     <table><tr>
         <td>
             <img src="Image/hw7/binary.png" border=0>
-            <p style="display: block; text-align: center; color: #969696;padding: 10px;">spp=1000</p>
+            <p style="display: block; text-align: center; color: #969696;padding: 10px;">spp=2048</p>
         </td>
     </tr></table>
 </details>
